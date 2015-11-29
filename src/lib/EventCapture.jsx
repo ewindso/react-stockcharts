@@ -6,6 +6,8 @@ import d3 from "d3";
 
 import Utils from "./utils/utils";
 
+import ChartDataUtil from "./utils/ChartDataUtil";
+
 var mousemove = "mousemove.pan", mouseup = "mouseup.pan";
 
 function d3Window(node) {
@@ -54,6 +56,13 @@ class EventCapture extends React.Component {
 				var newPos = Utils.mousePosition(e);
 				this.context.onMouseMove(newPos);
 			}
+		}
+
+		if(this.props.onMouseMove) {
+			var chartData = this.context.chartData;
+			var newPos = Utils.mousePosition(e);
+			var currentItems = ChartDataUtil.getCurrentItems(chartData, newPos, this.context.plotData);
+			this.props.onMouseMove(currentItems);
 		}
 	}
 	handleMouseDown(e) {
@@ -144,6 +153,7 @@ class EventCapture extends React.Component {
 
 EventCapture.propTypes = {
 	mainChart: React.PropTypes.number.isRequired,
+	onMouseMove: React.PropTypes.func,
 	mouseMove: React.PropTypes.bool.isRequired,
 	zoom: React.PropTypes.bool.isRequired,
 	zoomMultiplier: React.PropTypes.number.isRequired,
@@ -177,6 +187,7 @@ EventCapture.contextTypes = {
 	focus: React.PropTypes.bool.isRequired,
 	onFocus: React.PropTypes.func,
 	deltaXY: React.PropTypes.func,
+	plotData: React.PropTypes.array
 };
 
 module.exports = EventCapture;
